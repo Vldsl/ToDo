@@ -1,3 +1,5 @@
+import "./../scss/style.scss";
+
 import { load } from "./modules/utils.js";
 import {
   searchQuery,
