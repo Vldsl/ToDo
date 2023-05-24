@@ -1,4 +1,4 @@
-const form = document.querySelector("#form"),
+export const form = document.querySelector("#form"),
   list = document.querySelector("#list"),
   taskInput = document.querySelector("#task-input"),
   taskSearch = document.querySelector("#task-search"),
@@ -8,9 +8,7 @@ const form = document.querySelector("#form"),
   deleteDoneTasksButton = document.querySelector(".delete-done-tasks"),
   loader = document.getElementById("loader");
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) ?? [];
-let prevCompletedTasks =
-  JSON.parse(localStorage.getItem("prevCompletedTasks")) ?? [];
-let prevDeletedTasks;
-
-export default {};
+export let tasks = JSON.parse(localStorage.getItem("tasks")) ?? [],
+  prevCompletedTasks =
+    JSON.parse(localStorage.getItem("prevCompletedTasks")) ?? [],
+  prevDeletedTasks;
