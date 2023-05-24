@@ -8,9 +8,10 @@ export const handleAddSubtask = (e, parentNode, task) => {
     "beforeend",
     `
 		<form class="form-add-subtask">
-			<input class="subtask-input" type="text">
-			<button class="btn" type="submit">Add Subtask</button>
-		</form>`
+    <input class="subtask-input form-control" type="text">
+    <button class="btn btn-primary" type="submit">Add Subtask</button>
+</form>
+`
   );
   const formAddSubtask = parentNode.querySelector(".form-add-subtask");
   const subtaskInput = formAddSubtask.querySelector(".subtask-input");
