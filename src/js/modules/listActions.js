@@ -1,73 +1,55 @@
 import { renderList } from "./render.js";
+import { saveToLS } from "./utils";
+import { loader } from "./variables.js";
 
-import { list, taskSearch } from "./variables";
-import { saveToLS, checkAllDone, checkEmptyList } from "./utils";
-
-export const searchQuery = () => {
+export const searchQuery = (list, taskSearch) => {
+  const searchValue = taskSearch.value.trim().toLowerCase();
   const listTasks = list.querySelectorAll(".list-group-item");
-
   if (!listTasks.length) return;
 
   listTasks.forEach((task) => {
     const taskTitle = task
       .querySelector(".task-title")
       .textContent.toLowerCase();
-    const isMatch = taskTitle.includes(taskSearch.value.trim().toLowerCase());
+    const isMatch = taskTitle.includes(searchValue);
 
     if (!isMatch) task.classList.add("d-none");
     else task.classList.remove("d-none");
   });
 };
 
-export const markAllDone = (prevCompletedTasks, tasks) => {
-  if (tasks.every((task) => task.done)) {
-    prevCompletedTasks =
-      JSON.parse(localStorage.getItem("prevCompletedTasks")) ?? [];
-    tasks.splice(0, tasks.length, ...prevCompletedTasks);
-    renderList(tasks);
-    localStorage.removeItem("prevCompletedTasks");
-    prevCompletedTasks = [];
+export const addTask = (e, taskInput, tasks, list) => {
+  e.preventDefault();
+  if (taskInput.value.trim().length < 1 || !isNaN(taskInput.value.trim())) {
+    taskInput.classList.add("error");
+    form.reset();
+    return;
+  }
+  taskInput.classList.remove("error");
+  const taskId = +form.dataset.taskId;
+  if (taskId) {
+    const taskIndex = tasks.findIndex(({ id }) => id === taskId);
+    if (taskIndex !== -1) {
+      const taskItem = list.querySelector(
+        `.list-group-item[data-id="${taskId}"]`
+      );
+      taskItem.querySelector(".task-title").textContent =
+        taskInput.value.trim();
+      tasks[taskIndex].text = taskInput.value.trim();
+      delete form.dataset.taskId;
+      btnForm.textContent = "Add Task";
+    }
   } else {
-    prevCompletedTasks = JSON.parse(localStorage.getItem("tasks"));
-    localStorage.setItem(
-      "prevCompletedTasks",
-      JSON.stringify(prevCompletedTasks)
-    );
-    tasks.forEach((task) => (task.done = true));
-    list
-      .querySelectorAll(".task-title")
-      .forEach((title) => title.classList.add("task-title--done"));
+    const newTask = {
+      id: Date.now(),
+      text: taskInput.value.trim(),
+      done: false,
+      subtasks: [],
+    };
+    tasks.unshift(newTask);
+    renderList(tasks);
   }
-  saveToLS(tasks);
-  checkAllDone(prevCompletedTasks, tasks);
-};
-
-export const markAllUndone = (prevCompletedTasks, tasks) => {
-  tasks.forEach((task) => (task.done = false));
-
-  list
-    .querySelectorAll(".task-title")
-    .forEach((title) => title.classList.remove("task-title--done"));
-  checkAllDone(prevCompletedTasks, tasks);
-  saveToLS(tasks);
-  if (prevCompletedTasks.length) {
-    localStorage.removeItem("prevCompletedTasks");
-    prevCompletedTasks = [];
-  }
-};
-
-export const deleteAllTasks = (tasks) => {
-  if (!tasks.length) return;
-  tasks = [];
-  list.innerHTML = "";
-  saveToLS(tasks);
-  checkEmptyList();
-};
-
-export const deleteDoneTasks = (tasks) => {
-  tasks = tasks.filter((task) => !task.done);
-  list.innerHTML = "";
-
-  tasks.length ? renderList(tasks) : checkEmptyList();
-  saveToLS(tasks);
+  saveToLS(loader, tasks);
+  form.reset();
+  taskInput.focus();
 };

@@ -1,9 +1,9 @@
 import { renderSubtask } from "./render.js";
 
-import { tasks } from "./variables";
 import { saveToLS } from "./utils";
+import { loader, tasks } from "./variables.js";
 
-export const handleAddSubtask = (e, parentNode, task) => {
+export const handleAddSubtask = (parentNode, task) => {
   parentNode.querySelector(".subtasks").insertAdjacentHTML(
     "beforeend",
     `
@@ -14,7 +14,7 @@ export const handleAddSubtask = (e, parentNode, task) => {
 `
   );
   const formAddSubtask = parentNode.querySelector(".form-add-subtask");
-  const subtaskInput = formAddSubtask.querySelector(".subtask-input");
+  const subtaskInput = formAddSubtask?.querySelector(".subtask-input");
   subtaskInput.focus();
 
   formAddSubtask?.addEventListener("submit", (e) => {
@@ -34,60 +34,32 @@ export const handleAddSubtask = (e, parentNode, task) => {
       done: false,
     };
     task.subtasks.push(newSubtask);
-
-    // parentNode.querySelector(".subtasks").insertAdjacentHTML(
-    //   "beforeend",
-    //   `<li class="d-flex justify-content-between subtask-item list-group-item" data-id="${
-    //     newSubtask.id
-    //   }">
-
-    // 			<span class="subtask-title">${subtaskInput.value.trim()}
-    // 			</span>
-    // 			<div class="subtask-item__buttons">
-
-    // 				<button type="button" data-action="done-subtask" class="btn-action">
-    // 					<img src="./img/tick.svg" alt="Done" width="18" height="18">
-    // 				</button>
-
-    // 				<button type="button" data-action="edit-subtask" class="btn-action">
-    // 					<img src="./img/edit.svg" alt="Edit" width="18" height="18">
-    // 				</button>
-
-    // 				<button type="button" data-action="delete-subtask" class="btn-action">
-    // 					<img src="./img/cross.svg" alt="Delete" width="18" height="18">
-    // 				</button>
-
-    // 			</div>
-    // 		</li>`
-    // );
-
     renderSubtask(newSubtask, parentNode);
 
     formAddSubtask.remove();
-    saveToLS(tasks);
+    saveToLS(loader, tasks);
   });
 };
 
 export const handleSubtaskAction = (e, task) => {
-  const subParendNode = e.target.closest(".subtask-item");
-  const subtaskId = Number(subParendNode?.dataset?.id);
-  const subtask = task.subtasks.find((subtask) => subtask.id === subtaskId);
+  const { target } = e;
+  const subParendNode = target.closest(".subtask-item");
+  const subtaskId = +subParendNode?.dataset?.id;
+  const subtask = task.subtasks.find(({ id }) => id === subtaskId);
+  const subtaskIndex = task.subtasks.findIndex(({ id }) => id === subtaskId);
 
   if (!subParendNode || isNaN(subtaskId) || !subtask) return;
 
-  if (e.target.dataset.action === "done-subtask") {
+  if (target.dataset.action === "done-subtask") {
     const subtaskTitle = subParendNode.querySelector(".subtask-title");
     subtask.done = !subtask.done;
     subtaskTitle.classList.toggle("subtask-title--done");
-  } else if (e.target.dataset.action === "delete-subtask") {
-    const subtaskIndex = task.subtasks.findIndex(
-      (subtask) => subtask.id === subtaskId
-    );
+  } else if (target.dataset.action === "delete-subtask") {
     if (subtaskIndex !== -1) {
       task.subtasks.splice(subtaskIndex, 1);
       subParendNode.remove();
     }
   }
 
-  saveToLS(tasks);
+  saveToLS(loader, tasks);
 };

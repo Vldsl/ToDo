@@ -20,33 +20,8 @@ export const renderSubtask = (newSubtask, parentNode) => {
     .insertAdjacentHTML("beforeend", subtaskHTML);
 };
 
-export const renderTask = (task) => {
-  const taskHTML = `
-	<li class="list-group-item d-flex justify-content-between task-item" data-id="${
-    task.id
-  }">
-	<span class="task-title ${task.done ? "task-title--done" : ""}">${
-    task.text
-  }</span>
-	<div class="task-item__buttons">
-			<button type="button" data-action="done" class="btn btn-action">
-					<img src="./img/tick.svg" alt="Done" width="18" height="18">
-			</button>
-			<button type="button" data-action="edit" class="btn btn-action">
-					<img src="./img/edit.svg" alt="Edit" width="18" height="18">
-			</button>
-			<button type="button" data-action="delete" class="btn btn-action">
-					<img src="./img/cross.svg" alt="Delete" width="18" height="18">
-			</button>
-	</div>
-</li>
-`;
-  list.insertAdjacentHTML("afterbegin", taskHTML);
-};
-
 export const renderList = (tasks) => {
-  list.innerHTML = "";
-  const taskHTML = tasks
+  list.innerHTML = tasks
     .map(
       (task) => `
 			<li class="list-group-item d-flex justify-content-between flex-column task-item" data-id="${
@@ -105,5 +80,4 @@ export const renderList = (tasks) => {
 	`
     )
     .join("");
-  list.insertAdjacentHTML("afterbegin", taskHTML);
 };
