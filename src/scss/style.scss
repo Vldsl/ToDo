@@ -36,6 +36,13 @@ body {
   color: #cdcdcd;
 }
 
+.subtask-item {
+  padding: 0.5rem 0 0.5rem 1rem;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+}
+
 .task-item__buttons,
 .subtask-item__buttons {
   display: flex;
@@ -88,10 +95,6 @@ body {
   & img {
     pointer-events: none;
   }
-}
-
-.float-right {
-  float: right;
 }
 
 .error {
